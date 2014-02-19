@@ -53,30 +53,42 @@ def get_source():
 			
     
 def check_updated_files(sourcefolder,targetfolder):
-    #Files to write the 
-    print 'Checking updated files'
+    #Files to write the directory info to 
     sourcefiles = 'c:/temp/sourcefiles.txt'
     targetfiles = 'c:/temp/targetfiles.txt'
 	#Open the list of filenames
+    system('del c:\\temp\\*files.txt')
     system('dir ' + sourcefolder + ' /t:w /o:-d /a:-h-d | find "/" >> ' + sourcefiles)
     system('dir ' + targetfolder + ' /t:w /o:-d /a:-h-d | find "/" >> ' + targetfiles)
-    emptyfile = empty_file(targetfiles)
+    emptysrc = empty_file(sourcefiles)
+    emptytrg = empty_file(targetfiles)
     fs = open(sourcefiles, 'r')
     ft = open(targetfiles, 'r')
-    
-    print 'Opened files'
-    if emptyfile:
+    #Instantiate class 
+    fsdt = File()
+    ftdt = File()
+    if emptysrc:
+	print 'Source is empty'
+	return 0
+    if emptytrg:
+	print 'Target file list is empty'
         copy_source_files(sourcefolder, targetfolder)
         return 0
     else:
         tline = ft.readline()
-        ftdt = check_file_date(tline)
-
+        ftdt.name, ftdt.datetime = check_file_date(tline)
+    filelist = []
     for line in fs:
-        fsdt = check_file_date(line)
+        fsdt.name, fsdt.datetime = check_file_date(line)
+#	print 'FS: %s TS: %s' % (fsdt.datetime, ftdt.datetime)
+#	print 'Source: %sTarget: %s' % (line, tline)
+#	print 'Comparing fsdt: %s and ftdt: %s for folder: %s ' % (fsdt.datetime, ftdt.datetime, sourcefolder)
         if fsdt.datetime == ftdt.datetime:
             if fsdt.name == ftdt.name:
-                copy_source_files(sourcefolder, targetfolder)
+#		print 'Names and dates are equal'
+#		print 'Filelist:  %s' % filelist
+		if filelist:
+		   copy_source_files(sourcefolder,targetfolder,filelist)
                 return 0
             else:
                 filelist.append(fsdt.name)
@@ -87,15 +99,12 @@ def check_updated_files(sourcefolder,targetfolder):
         else:
             filelist.append(fsdt.name)
             tline = ft.readline()
-            ftdt = check_file_date(tline)
-            continue
-    return 0
+	    if tline:
+               ftdt.name, ftdt.datetime = check_file_date(tline)
     
-    def close_files():
-		print 'Closing files'
-		fs.close()
-		ft.close()
-		system('del c:\temp\*files.txt')
+    print 'Closing files'
+    fs.close()
+    ft.close()
         
 def empty_file(filename):
     p = stat(filename).st_size
@@ -106,15 +115,15 @@ def empty_file(filename):
     
 def check_file_date(line):
 #Check the date and time of last update to the file.
+        #print 'Line value: %s ' % line
         lsf = line.split(' ')
         m,d,y = lsf[0].split('/')
         hr,mn = lsf[2].split(':')
         dt = datetime(int(y),int(m),int(d), int(hr),int(mn))
-        if lsf[3] == 'PM':
-            File.datetime = dt + timedelta(hours=12)
-        File.name = lsf[-1]
-        print File.datetime
-        return File
+	if lsf[3] == 'PM' and int(hr) != 12:
+            dt = dt + timedelta(hours=12)
+	name = lsf[-1].rstrip()
+        return name, dt 
         
 def make_target_dir(targetfolder):
     #Creating the target folder
@@ -125,8 +134,8 @@ def copy_source_files(sourcefolder, targetfolder, files=None):
     #Copy the sourcefiles to 
     if files:
         for file in files:
-            sourcefile = sourcefolder + file
-            targetfile = targetfolder + file
+            sourcefile = sourcefolder + '\\' + file
+            targetfile = targetfolder + '\\' + file
             system('copy ' + sourcefile + ' ' + targetfile)
             print 'File: %s copied to %s ' % (sourcefile, targetfile)
     else:
@@ -135,4 +144,4 @@ def copy_source_files(sourcefolder, targetfolder, files=None):
     
 if __name__ == '__main__':
     get_source()
-    #close_files()
+    #system('del c:\\temp\\*files.txt')
