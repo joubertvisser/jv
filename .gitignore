@@ -1,0 +1,3 @@
+#ignore the following file types
+*.DS_STORE
+*.md
