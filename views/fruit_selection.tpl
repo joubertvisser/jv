@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Fruit Selection Confirmation</title>
+<title>Test Selection Confirmation</title>
 </head>
 <p>
 <p>
-Your favorite fruit is {{fruit}}
+Your favorite test is {{fruit}}
 </body>
 </html>

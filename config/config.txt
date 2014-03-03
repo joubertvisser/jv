@@ -1,0 +1,6 @@
+Username=joubert.visser@tradingtechnologies.com
+Password=echo,.123
+Product=ES
+Leg1
+Leg2
+Leg3

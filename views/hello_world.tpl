@@ -5,7 +5,7 @@
 </head>
 <body>
 <p>
-Welcome {{username}}
+Testing {{username}}
 </p>
 <ul>
 %for thing in things:
@@ -13,7 +13,7 @@ Welcome {{username}}
 %end
 </ul><p>
 <form action="/favorite_fruit" method="POST">
-What is your favorite fruit?
+What is your favorite test?
 <input type="text" name="fruit" size="40" value=""><br>
 </form>
 </body>
